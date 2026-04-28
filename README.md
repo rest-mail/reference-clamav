@@ -1,8 +1,10 @@
 # reference-clamav
 
-A thin convention-conforming wrapper around the upstream [`clamav/clamav`](https://hub.docker.com/r/clamav/clamav) image. Multi-arch (`linux/amd64` + `linux/arm64`), MIT-licensed, calver-tagged.
+A multi-arch [clamav](https://www.clamav.net/) container built on Alpine. Multi-arch (`linux/amd64` + `linux/arm64`), MIT-licensed, calver-tagged.
 
-clamav is a stateless antivirus scanner — `bytes in, infected/clean out`. There's no per-tenant config, no learning, no reputation. The wrapper exists for tagging consistency and the rest-mail healthcheck convention; it does **not** add overlay config support because there's nothing meaningful to overlay.
+Built on `alpine:3.20 + apk add clamav` rather than wrapping `clamav/clamav` because the upstream Docker Hub image is amd64-only and breaks our multi-arch contract.
+
+clamav is a stateless antivirus scanner — bytes in, infected/clean out. There's no per-tenant config, no learning, no reputation. This image exposes clamd on TCP `:3310`; consumers send file streams via the standard clamd protocol.
 
 ## Image
 
@@ -28,23 +30,24 @@ clamd listens on TCP `:3310` (the LDAP-style protocol). Use any clamav client li
 
 ## Environment variables
 
-This image inherits all environment variables from upstream `clamav/clamav`. The relevant ones:
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `CLAMAV_FRESHCLAM` | `false` | Run the `freshclam` daemon in the background for periodic signature updates. The initial signature fetch always happens at first start regardless of this flag. |
 
-| Variable | Description |
-|----------|-------------|
-| `CLAMAV_NO_FRESHCLAMD` | `false` (default) runs `freshclam` daemon for signature updates; `true` disables it |
-| `CLAMAV_NO_CLAMD` | `false` (default) runs `clamd`; `true` disables it (e.g. for one-shot scans) |
-| `CLAMAV_NO_MILTERD` | `true` (default) disables milter; `false` enables |
+The clamav engine itself is configured via `/etc/clamav/clamd.conf` and `/etc/clamav/freshclam.conf`. Override either by mounting a replacement at the same path:
 
-See [upstream docs](https://docs.clamav.net/manual/Installing/Docker.html) for the full list.
+```bash
+docker run -v $(pwd)/clamd.conf:/etc/clamav/clamd.conf:ro \
+  ghcr.io/rest-mail/reference-clamav:latest
+```
 
 ## Healthcheck
 
 ```
-clamdcheck.sh
+echo PING | nc -w 2 127.0.0.1 3310 | grep -q PONG
 ```
 
-The `start-period` is 120s because the initial signature download is slow. After that, `clamdcheck.sh` returns within a second.
+`start-period` is 300s because the initial signature download takes 5–10 minutes on a fresh container; without signatures, clamd refuses to start.
 
 ## Why no overlay support?
 
