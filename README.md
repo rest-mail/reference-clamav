@@ -1,6 +1,6 @@
 # reference-clamav
 
-A multi-arch [clamav](https://www.clamav.net/) container built on Alpine. Multi-arch (`linux/amd64` + `linux/arm64`), MIT-licensed, calver-tagged.
+A multi-arch [clamav](https://www.clamav.net/) container built on Alpine. Multi-arch (`linux/amd64` + `linux/arm64`), MIT-licensed, SemVer-tagged.
 
 Built on `alpine:3.20 + apk add clamav` rather than wrapping `clamav/clamav` because the upstream Docker Hub image is amd64-only and breaks our multi-arch contract.
 
