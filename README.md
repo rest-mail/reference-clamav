@@ -1,6 +1,6 @@
 # reference-clamav
 
-A multi-arch [clamav](https://www.clamav.net/) container built on Alpine. Multi-arch (`linux/amd64` + `linux/arm64`), MIT-licensed, calver-tagged.
+A multi-arch [clamav](https://www.clamav.net/) container built on Alpine. Multi-arch (`linux/amd64` + `linux/arm64`), MIT-licensed, SemVer-tagged.
 
 Built on `alpine:3.20 + apk add clamav` rather than wrapping `clamav/clamav` because the upstream Docker Hub image is amd64-only and breaks our multi-arch contract.
 
@@ -9,8 +9,8 @@ clamav is a stateless antivirus scanner — bytes in, infected/clean out. There'
 ## Image
 
 ```
-ghcr.io/rest-mail/reference-clamav:latest          # always newest
-ghcr.io/rest-mail/reference-clamav:YYYY.MM.DD      # immutable calver tag
+ghcr.io/rest-mail/reference-clamav:latest          # newest master build; pin a release instead
+ghcr.io/rest-mail/reference-clamav:X.Y.Z          # a release: git tag vX.Y.Z publishes it
 ```
 
 ## Quick start
