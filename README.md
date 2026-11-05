@@ -9,7 +9,7 @@ clamav is a stateless antivirus scanner — bytes in, infected/clean out. There'
 ## Image
 
 ```
-ghcr.io/rest-mail/reference-clamav:latest          # newest master build; pin a release instead
+ghcr.io/rest-mail/reference-clamav:latest          # newest main build; pin a release instead
 ghcr.io/rest-mail/reference-clamav:X.Y.Z          # a release: git tag vX.Y.Z publishes it
 ```
 
